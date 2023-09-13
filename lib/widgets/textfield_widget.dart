@@ -12,23 +12,21 @@ class CustomTextField extends StatelessWidget{
     double width=displayWidth(context);
     return TextField(
       controller: controller,
-      cursorColor: Colors.grey,
+      cursorColor: Colors.black,
       decoration: InputDecoration(
       hintText: StringConstant.searchString,
-      hintStyle:  TextStyle(fontFamily: StringConstant.font),
+      hintStyle:  TextStyle(fontFamily: StringConstant.font,color: Colors.black),
       suffixIcon: IconButton(
         splashRadius: width*0.03,
-        
-        icon: const Icon(Icons.clear,color: Colors.grey,),
+        icon: const Icon(Icons.clear,color: Colors.black,),
         onPressed: () => controller.clear()),
       prefixIcon: IconButton(
         splashRadius: width*0.03,
-        icon: const Icon(Icons.search,color:Colors.grey),
+        icon: const Icon(Icons.search,color:Colors.black),
         onPressed: () {}),
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(15.0)))); 
-  }
-  
+  }  
 }
 

@@ -1,8 +1,35 @@
+import 'package:ecommerse/provider/addtocart_provider.dart';
+import 'package:ecommerse/provider/admin_provider.dart';
+import 'package:ecommerse/provider/bookmark_provider.dart';
+import 'package:ecommerse/provider/dashboard_provider.dart';
+import 'package:ecommerse/provider/edit_profile_provider.dart';
+import 'package:ecommerse/provider/mobile_provider.dart';
+import 'package:ecommerse/provider/person_provider.dart';
+import 'package:ecommerse/views/onBoarding/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'views/responsive_screen.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'firebase_options.dart';
+import 'provider/authEmailandPassword_Provider.dart';
+import 'provider/profile_provider.dart';
+
+Future<void> main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+ runApp(MultiProvider(providers: [
+  ChangeNotifierProvider<UserDataProvider>(create: (context) => UserDataProvider()),
+  ChangeNotifierProvider<DashboardProvider>(create: (context) => DashboardProvider()),
+  ChangeNotifierProvider<AdminPageProvider>(create: (context) => AdminPageProvider()),
+  ChangeNotifierProvider<ProfileProvider>(create: (context) => ProfileProvider(context)),
+  ChangeNotifierProvider<ProfileDataProvider>(create: (context) => ProfileDataProvider()),
+  //ChangeNotifierProvider<OrderDetailProvider>(create: (context) => OrderDetailProvider()),
+  ChangeNotifierProvider<AddtoCartProvider>(create: (context) => AddtoCartProvider()),
+  ChangeNotifierProvider<BookmarkProvider>(create: (context) => BookmarkProvider()),
+  ChangeNotifierProvider<MobileLayoutProvider>(create: (context) => MobileLayoutProvider()),
+  ChangeNotifierProvider<AuthServiceEmailPassword>(create: (context) => AuthServiceEmailPassword()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -10,9 +37,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Ecommerse(),
+      home: SplashScreen(),
     );
   }
 }
