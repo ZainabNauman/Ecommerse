@@ -1,6 +1,6 @@
 # ecommerse
 
-A new Flutter project.
+This is my ecommerce app for furnitures. I am fetching data using firebase.
 
 ## Getting Started
 
