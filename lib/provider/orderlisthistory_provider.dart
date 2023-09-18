@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class OrderListHistoryProvider with ChangeNotifier{
-    Future<DocumentSnapshot?> fetchItemData(String productId) async {
+
+  Future<DocumentSnapshot?> fetchItemData(String productId) async {
     try {
       final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
       return itemDoc;
@@ -13,9 +14,7 @@ class OrderListHistoryProvider with ChangeNotifier{
     }
   }
 
-
-  Future<List<DocumentSnapshot>> fetchOrdersForCurrentUser() async {
-    
+  Future<List<DocumentSnapshot>> fetchOrdersForCurrentUser() async { 
     final currentUser = FirebaseAuth.instance.currentUser;
     final userId = currentUser?.uid;
     if (userId == null) {
@@ -29,9 +28,9 @@ class OrderListHistoryProvider with ChangeNotifier{
       return [];
     }
   }
-  Future<List<DocumentSnapshot>> fetchOrdersForCustomerUser(String? customerId) async {
-    
-    final userId = customerId;
+
+  Future<List<DocumentSnapshot>> fetchOrdersForCustomerUser(String? customeruid) async {  
+    final userId = customeruid;
     if (userId == null) {
       return [];
     }
@@ -43,4 +42,14 @@ class OrderListHistoryProvider with ChangeNotifier{
       return [];
     }
   }
+  /////////vendor
+  Future<DocumentSnapshot?> fetchItemDataV(String productId) async {
+    try {
+      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
+      return itemDoc;
+    } catch (e) {
+      print('Error fetching item data: $e');
+      return null;
+    }
+  } 
 }

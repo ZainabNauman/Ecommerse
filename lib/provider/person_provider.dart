@@ -3,6 +3,7 @@ import 'package:ecommerse/views/dashboard/dashboard_screen.dart';
 import 'package:ecommerse/views/onBoarding/login.dart';
 import 'package:ecommerse/views/onBoarding/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/person_model.dart';
@@ -10,19 +11,7 @@ import '../utils/string_constant.dart';
 import 'authEmailandPassword_Provider.dart';
 
 class UserDataProvider extends ChangeNotifier {
-  PersonModel profileData = PersonModel(
-    name: '',
-    email: '',
-    password: '',
-    phoneno: '',
-    address: '',
-    birthday: '',
-    brand: '',
-    uid:'',
-    bookmark: [],
-    admin: '',
-    img:''
-  );
+  PersonModel profileData = PersonModel(name: '', email: '', password: '', phoneno: '', address: '', birthday: '', brand: '', uid:'', bookmark: [], admin: '', img:'');
   bool loginLoader = false;
   bool loginIsobscure = true;
   bool signUpLoader = false;
@@ -44,19 +33,10 @@ class UserDataProvider extends ChangeNotifier {
     if (currentUser != null) {
       final fetchedData = await fetchUserData(currentUser);
       if (fetchedData != null) {
-        profileData = PersonModel(
-          name: fetchedData.name,
-          email: fetchedData.email,
-          password: fetchedData.password,
-          phoneno: fetchedData.phoneno,
-          address: fetchedData.address,
-          birthday: fetchedData.birthday,
-          uid: fetchedData.uid,
-          brand: fetchedData.brand.isEmpty ? '' : fetchedData.brand,
-          bookmark: fetchedData.bookmark.isEmpty? []:fetchedData.bookmark,
-          admin: fetchedData.admin,
-          img: fetchedData.img
-        );        
+        profileData = PersonModel(name: fetchedData.name, email: fetchedData.email, password: fetchedData.password, phoneno: fetchedData.phoneno,
+          address: fetchedData.address, birthday: fetchedData.birthday, uid: fetchedData.uid, brand: fetchedData.brand.isEmpty ? '' : fetchedData.brand,
+          bookmark: fetchedData.bookmark.isEmpty? []:fetchedData.bookmark, admin: fetchedData.admin,img: fetchedData.img);        
+        changeloginLoader(false);
          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DashboardScreen()) , (route) => false);
       } else {
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginInScreen()) , (route) => false);
@@ -67,36 +47,26 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   Future<PersonModel?> fetchUserData(user) async {
-  if (user == null) {
-    return null;
-  }
-  try {
-    final DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-    if (userData.exists) {
-      final Map<String, dynamic> data = userData.data() as Map<String, dynamic>;
-      final PersonModel profile = PersonModel(
-        name: data['name'] ?? '',       
-        email: data['email'] ?? '',
-        password: data['password'] ?? '',
-        phoneno: data['phone'] ?? '',
-        address: data['address'] ?? '',
-        birthday: data['birthday'] ?? '',
-        brand: data['brand'] ?? '',
-        uid: data['uid'] ?? '',
-        bookmark: data['bookmark'] ?? '',
-        admin:data['admin'],
-        img: data['img'] ?? '');
-      return profile;
-    } else {
+    if (user == null) {
       return null;
     }
-  } catch (e) {
-    print("Error fetching user data: $e");
-    return null;
+    try {
+      final DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (userData.exists) {
+        final Map<String, dynamic> data = userData.data() as Map<String, dynamic>;
+        final PersonModel profile = PersonModel(name: data['name'] ?? '', email: data['email'] ?? '', password: data['password'] ?? '',
+          phoneno: data['phone'] ?? '', address: data['address'] ?? '', birthday: data['birthday'] ?? '', brand: data['brand'] ?? '', 
+          uid: data['uid'] ?? '', bookmark: data['bookmark'] ?? '', admin:data['admin'], img: data['img'] ?? '');
+        return profile;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+      return null;
+    }
   }
-}
    ///////// login
-
   void signInTap(BuildContext context, String email, String pass){
     if (email.isEmpty || !RegExp(StringConstant.emailpattern).hasMatch(email)) {
       showpopup(context, StringConstant.alert, StringConstant.alertDesc);
@@ -106,13 +76,13 @@ class UserDataProvider extends ChangeNotifier {
       signin(context, email, pass);
     }
   }
-
-     
+    
   void signin(BuildContext context, String email, String pass) async {
     changeloginLoader(true);
     final authEmailPassword = Provider.of<AuthServiceEmailPassword>(context, listen: false);
     try {
       await authEmailPassword.signInWithEmailandPassword(email, pass);
+      await storeNotificationToken();
       await getCurrentUserAndFetchData(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -120,19 +90,23 @@ class UserDataProvider extends ChangeNotifier {
     }
   }
 
+  storeNotificationToken()async{
+    String? token = await FirebaseMessaging.instance.getToken();
+    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set(
+        {
+          'token': token
+        },SetOptions(merge: true));
+  }
+
+
    void showpopup(BuildContext context, String title, String message) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(message),
-          );
+          return AlertDialog(title: Text(title), content: Text(message));
         });
   }
   //////////sign up
-  ///
-  
   void changesignUpIsCkecked(bool value){
     signUpIsCkecked = value;
     notifyListeners();
@@ -153,19 +127,10 @@ class UserDataProvider extends ChangeNotifier {
     if (currentUser != null) {
       final fetchedData = await fetchUserData(currentUser);
       if (fetchedData != null) {
-        profileData = PersonModel(
-          name: fetchedData.name,
-          email: fetchedData.email,
-          password: fetchedData.password,
-          phoneno: fetchedData.phoneno,
-          address: fetchedData.address,
-          birthday: fetchedData.birthday,
-          uid: fetchedData.uid,
+        profileData = PersonModel(name: fetchedData.name, email: fetchedData.email, password: fetchedData.password,
+          phoneno: fetchedData.phoneno, address: fetchedData.address, birthday: fetchedData.birthday, uid: fetchedData.uid,
           brand: fetchedData.brand.isEmpty ? '' : fetchedData.brand,
-          bookmark: fetchedData.bookmark,
-          admin: fetchedData.admin,
-          img: fetchedData.img
-        );
+          bookmark: fetchedData.bookmark, admin: fetchedData.admin, img: fetchedData.img);
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DashboardScreen()) , (route) => false);
       } else {
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SignUpScreen()) , (route) => false);
@@ -194,6 +159,7 @@ class UserDataProvider extends ChangeNotifier {
       signup(context, email, pass, name,  birthday, address, phone, brand,img);
     }
   }
+  
   void signup(BuildContext context, String email, String pass,String name,String birthday,String address,String phone,String brand,String img) async {
     changesignUpLoader(true);
     final authEmailPassword =Provider.of<AuthServiceEmailPassword>(context, listen: false);
@@ -205,26 +171,15 @@ class UserDataProvider extends ChangeNotifier {
       changesignUpLoader(false);
     }
   }
-
   ///////////edit Profile
   Future<void> getEditProfileData(BuildContext context,String name,String email,String phoneno,String address,String birthday) async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       final fetchedData = await fetchUserData(currentUser);
       if (fetchedData != null) {
-        profileData = PersonModel(
-          name: name,
-          email: email,
-          password: fetchedData.password,
-          phoneno: phoneno,
-          address: address,
-          birthday: birthday,
-          uid: currentUser.uid,
-          brand: fetchedData.brand.isEmpty ? '' : fetchedData.brand,
-          bookmark: fetchedData.bookmark,
-          admin: fetchedData.admin,
-          img: fetchedData.img
-        );
+        profileData = PersonModel(name: name, email: email, password: fetchedData.password, phoneno: phoneno, address: address, 
+          birthday: birthday,uid: currentUser.uid, brand: fetchedData.brand.isEmpty ? '' : fetchedData.brand,
+          bookmark: fetchedData.bookmark, admin: fetchedData.admin, img: fetchedData.img);
         print('Profile Data after fetchhhhhhhhhhh: ${profileData.brand}');
         notifyListeners();
       } else {

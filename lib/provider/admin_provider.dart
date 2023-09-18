@@ -32,20 +32,19 @@ class AdminPageProvider with ChangeNotifier {
   }
 
   PersonModel _createPersonModelFromSnapshot(DocumentSnapshot doc) {
-  final data = doc.data() as Map<String, dynamic>;
-  return PersonModel(
-    name: data['name'] ?? '',
-    email: data['email'] ?? '',
-    password: data['password'] ?? '',
-    phoneno: data['phone'] ?? '',
-    address: data['address'] ?? '',
-    birthday: data['birthday'] ?? '',
-    brand: data['brand'] ?? '',
-    bookmark: data['bookmark'] ?? [],
-    uid: data['uid'] ?? '',
-    admin: data['admin'] ?? '',
-    img: data['img']
-  );
-}
-
+    final data = doc.data() as Map<String, dynamic>;
+    return PersonModel(
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      password: data['password'] ?? '',
+      phoneno: data['phone'] ?? '',
+      address: data['address'] ?? '',
+      birthday: data['birthday'] ?? '',
+      brand: data['brand'] ?? '',
+      bookmark: data['bookmark'] ?? [],
+      uid: data['uid'] ?? '',
+      admin: data['admin'] ?? '',
+      img: data['img']
+    );
+  }
 }

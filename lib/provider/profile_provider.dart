@@ -41,8 +41,7 @@ class ProfileProvider extends ChangeNotifier {
         final authService =
         Provider.of<AuthServiceEmailPassword>(context, listen: false);
         authService.signOut();
-        Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(builder: (context) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
           return const LoginInScreen();
         }), (route) => false);
       }, 

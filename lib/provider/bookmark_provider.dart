@@ -7,12 +7,14 @@ import '../models/item_model.dart';
 class BookmarkProvider with ChangeNotifier {
   List<String> _bookmarkedItemIds = [];
   List<ItemModel> _bookmarkedItems = [];
-
   List<ItemModel> get bookmarkedItems => _bookmarkedItems;
+
+  bool isBookmarked(String itemId) {
+    return _bookmarkedItemIds.contains(itemId);
+  }
 
   Future<void> toggleBookmark(BuildContext context,ItemModel item, String userId) async {
     final String itemId = item.id;
-
     if (_bookmarkedItemIds.contains(itemId)) {  
       _bookmarkedItemIds.remove(itemId);
       _bookmarkedItems.removeWhere((item) => item.id == itemId);
@@ -25,9 +27,9 @@ class BookmarkProvider with ChangeNotifier {
     await updateFirestoreBookmarks(userId);
     notifyListeners();
   }
+
   Future<void> removeItemFromBookMark(BuildContext context, ItemModel item, String userId) async {
     final String itemId = item.id;
-
     if (_bookmarkedItemIds.contains(itemId)) {
       _bookmarkedItemIds.remove(itemId);
       _bookmarkedItems.removeWhere((bookmarkItem) => bookmarkItem.id == itemId);
@@ -78,7 +80,6 @@ class BookmarkProvider with ChangeNotifier {
           quantity: data['quantity']
         );
       }).toList();
-
       return bookmarkedItems;
     } catch (e) {
       print('Error fetching bookmarked items from Firestore: $e');

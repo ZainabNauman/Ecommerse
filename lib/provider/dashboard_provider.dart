@@ -12,14 +12,15 @@ import '../views/dashboard/profile/profile_page.dart';
 import 'person_provider.dart';
 
 class DashboardProvider with ChangeNotifier {
-
-   List<Widget> usertype=[];
+  List<BottomNavigationBarItem> bottomNavigationBarItems = [];
+  int currentIndex = 0;
+  List<Widget> usertype=[];
 
   final List<Widget> customerWidgets = [
     const HomeScreen(),
     const ProfilePage(),
     const HistoryPage(),
-    BookmarkPage(),
+    const BookmarkPage(),
   ];
 
   final List<Widget> vendorWidgets = [
@@ -33,23 +34,21 @@ class DashboardProvider with ChangeNotifier {
     const ProfilePage(),
   ];
 
-  List<BottomNavigationBarItem> bottomNavigationBarItems = [];
-  int currentIndex = 0;
   void changeIndex(int index) {
     currentIndex = index;
     notifyListeners();
   }
 
-
- void role(BuildContext context){
-  final userData = Provider.of<UserDataProvider>(context).profileData;
-  String userRole=  userData.admin.isNotEmpty?'admin':userData.brand.isNotEmpty?'vendor':'customer';
+  void role(BuildContext context){
+    final userData = Provider.of<UserDataProvider>(context).profileData;
+    String userRole=  userData.admin.isNotEmpty?'admin':userData.brand.isNotEmpty?'vendor':'customer';
     setRole(userRole);
- }
+  }
+
   void setRole(String role) {
     switch (role) {
       case 'customer':
-      usertype=customerWidgets;
+        usertype=customerWidgets;
         bottomNavigationBarItems = const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -70,7 +69,7 @@ class DashboardProvider with ChangeNotifier {
         ];
         break;
       case 'vendor':
-      usertype=vendorWidgets;
+        usertype=vendorWidgets;
         bottomNavigationBarItems = const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -87,7 +86,7 @@ class DashboardProvider with ChangeNotifier {
         ];
         break;
       case 'admin':
-      usertype=adminWidgets;
+        usertype=adminWidgets;
         bottomNavigationBarItems = const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

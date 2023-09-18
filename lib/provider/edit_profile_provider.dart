@@ -11,10 +11,7 @@ class ProfileDataProvider extends ChangeNotifier {
     final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
     final profileUserProvider = Provider.of<ProfileProvider>(context, listen: false);
     final userEmail = userDataProvider.profileData.email;
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: userEmail)
-        .get();
+    final querySnapshot = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: userEmail).get();
     if (querySnapshot.docs.length == 1) {
     final userDocumentReference = querySnapshot.docs[0].reference;
     await userDocumentReference.update({
@@ -31,6 +28,5 @@ class ProfileDataProvider extends ChangeNotifier {
     } else {
       print('Error: Found ${querySnapshot.docs.length} documents with the same email.');
     }
-  }
-  
+  } 
 }

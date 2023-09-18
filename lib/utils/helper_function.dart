@@ -21,98 +21,83 @@ import '../models/category_model.dart';
    :Responsive.isTablet(context) ?MediaQuery.of(context).size/2
    :MediaQuery.of(context).size/3;
   }
-
-  
- showSnackbar(BuildContext context, String text) {
+ 
+  showSnackbar(BuildContext context, String text) {
     var snackBar = SnackBar(
       backgroundColor: Colors.black,
       content: Text(text),
-      duration: const Duration(seconds: 2), // Adjust the duration as needed
+      duration: const Duration(seconds: 2),
     );
-
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-
 //////////////////CategoriesList////////////////////////////////////////
-
-// void uploadCategoriesToFirestore() async {
-//   CollectionReference categoriesCollection = FirebaseFirestore.instance.collection('categories');
-//   for (var category in ImageConstant.categories) {
-//     await categoriesCollection.add({
-//       'title': category.title,
-//       'imageUrl': category.imageUrl,
-//     });
-//   }
-//   print('Categories uploaded to Firestore');
-// }
-
-Stream<List<CategoryModel>> getCategoryData() {
-  return FirebaseFirestore.instance
-      .collection('categories')
-      .snapshots()
-      .map((QuerySnapshot snapshot) {
-    List<CategoryModel> categories = [];
-    snapshot.docs.forEach((DocumentSnapshot doc) {
-      final category = CategoryModel(
-        title: doc['title'], // Use 'doc' to access data in the document
-        imageUrl: doc['imageUrl'],
-      );
-      categories.add(category); // Add the category to the list
+  Stream<List<CategoryModel>> getCategoryData() {
+    return FirebaseFirestore.instance.collection('categories').snapshots().map((QuerySnapshot snapshot) {
+      List<CategoryModel> categories = [];
+      snapshot.docs.forEach((DocumentSnapshot doc) {
+        final category = CategoryModel(title: doc['title'], imageUrl: doc['imageUrl'],);
+        categories.add(category); 
+      });
+      return categories;
     });
-    return categories;
-  });
-}
-
-//////////////////////All Items///////////////////////////////////////////
-
-// void uploadItemToFirestore() async {
-//   CollectionReference categoriesCollection = FirebaseFirestore.instance.collection('table');
-//   for (var item in ImageConstant.tableList) {
-//     await categoriesCollection.add({
-//       'name': item.name,
-//       'price': item.price,
-//       'img': item.img,
-//     });
-//   }
-//   print('Categories uploaded to Firestore');
-// }
-
-//////////All////////////////
-Future<List<ItemModel>> fetchAll( String? brand) async {
-  try {
-    String collectionName = 'items';
-    
-    final skillsCollection =
-        FirebaseFirestore.instance.collection(collectionName);
-    final skillsSnapshot = await skillsCollection.get();
-    final skills = skillsSnapshot.docs
-        .where((doc) {
-          final data = doc.data();
-          if (brand == null || brand.isEmpty) {
-            return true;
-          } else {
-            final itemBrand = data['brand'] as String;
-            return itemBrand == brand;
-          }
-        })
-        .map((doc) {
-          final data = doc.data();
-          return ItemModel(
-            name: data['name'],
-            price: data['price'],
-            img: data['img'],
-            brand: data['brand'],
-            category: data['category'],
-            id:data['id'],
-            quantity: data['quantity']
-          );
-        })
-        .toList();
-    return skills;
-  } catch (error) {
-    print('Error fetching skills data: $error');
-    return [];
   }
-}
-
-
+//////////////////////All Items///////////////////////////////////////////
+// Future<List<ItemModel>> fetchAll( String? brand) async {
+//   try {
+//     String collectionName = 'items';
+//     final skillsCollection =FirebaseFirestore.instance.collection(collectionName);
+//     final skillsSnapshot = await skillsCollection.get();
+//     final skills = skillsSnapshot.docs.where((doc) {
+//       final data = doc.data();
+//       if (brand == null || brand.isEmpty) {
+//         return true;
+//       } else {
+//         final itemBrand = data['brand'] as String;
+//         return itemBrand == brand;
+//       }
+//     }).map((doc) {
+//           final data = doc.data();
+//           return ItemModel(
+//           name: data['name'],
+//           price: data['price'],
+//           img: data['img'],
+//           brand: data['brand'],
+//           category: data['category'],
+//           id:data['id'],
+//           quantity: data['quantity']);
+//       }).toList();
+//     return skills;
+//   } catch (error) {
+//     print('Error fetching skills data: $error');
+//     return [];
+//   }
+// }
+  Future<List<ItemModel>> fetchItemsBySearch(String query, String? brand) async {
+    try {
+      String collectionName = 'items';
+      final skillsCollection = FirebaseFirestore.instance.collection(collectionName);
+      final skillsSnapshot = await skillsCollection.get();
+      final skills = skillsSnapshot.docs.where((doc) {
+        final data = doc.data();
+          final itemName = data['name'] as String;
+          final itemBrand = data['brand'] as String;
+          return (brand == null || brand.isEmpty || itemBrand == brand) &&
+            itemName.toLowerCase().contains(query.toLowerCase());   
+      }).map((doc) {
+        final data = doc.data();
+        return ItemModel(
+          name: data['name'],
+          price: data['price'],
+          img: data['img'],
+          brand: data['brand'],
+          category: data['category'],
+          id: data['id'],
+          quantity: data['quantity'],
+        );
+      }).toList();
+      return skills;
+    } catch (error) {
+      print('Error fetching skills data: $error');
+      return [];
+    }
+  }
