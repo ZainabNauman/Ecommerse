@@ -58,7 +58,7 @@ class _ItemGridViewState extends State<ItemGridView> {
                             Padding(padding: EdgeInsets.only(top: size.width*0.01,left: size.width*0.02,right:size.width*0.02,bottom:size.width*0.01),
                               child: Text(widget.items[index].name,style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.bold))),
                             Padding(padding: EdgeInsets.only(left: size.width*0.02,right:size.width*0.02,bottom:size.width*0.01,top: size.width*0.01),
-                              child: Text(widget.items[index].price,style: TextStyle(fontFamily: StringConstant.font))),
+                              child: Text('\$${widget.items[index].price}',style: TextStyle(fontFamily: StringConstant.font))),
                             Padding(padding: EdgeInsets.only(top: size.width*0.01,left: size.width*0.02,right:size.width*0.02,bottom:size.width*0.01),
                               child: Row(children: [
                                 RatingBarWidget(rating: 2.5),
@@ -74,7 +74,7 @@ class _ItemGridViewState extends State<ItemGridView> {
                                     },
                                     child: Material(
                                       elevation: 10,
-                                      shape:CircleBorder(),
+                                      shape: const CircleBorder(),
                                       child: InkWell(
                                         onTap: () {
                                           Provider.of<AddtoCartProvider>(context, listen: false).toggleAddtoCart(context,widget.items[index],1);
@@ -93,7 +93,7 @@ class _ItemGridViewState extends State<ItemGridView> {
                                       },
                                       child: Material(
                                         elevation: 10,
-                                        shape: CircleBorder(),
+                                        shape: const CircleBorder(),
                                         child: InkWell(
                                           onTap: () {
                                             showDialog(

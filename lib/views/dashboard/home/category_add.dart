@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecommerse/utils/helper_function.dart';
-import 'package:ecommerse/widgets/custom_appbar.dart';
-import 'package:ecommerse/widgets/custom_button.dart';
-import 'package:ecommerse/widgets/textfield_credentials.dart';
+import '/utils/helper_function.dart';
+import '/widgets/custom_appbar.dart';
+import '/widgets/custom_button.dart';
+import '/widgets/textfield_credentials.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,7 +44,7 @@ class _CategoryAddScreenState extends State<CategoryAddScreen> {
               SizedBox(height: size.width*0.1),
               CustomTextFieldCredential(controller: imgTfController,hint: "Enter Image", icon: const Icon(Icons.image), isObscure: false, text: "Image"),
               SizedBox(height: size.width*0.15),
-               CustomTextFieldCredential(controller: quantityTfController,hint: "Enter Quantity", icon: const Icon(Icons.production_quantity_limits_sharp), isObscure: false, text: "Quantity"),
+              CustomTextFieldCredential(controller: quantityTfController,hint: "Enter Quantity", icon: const Icon(Icons.production_quantity_limits_sharp), isObscure: false, text: "Quantity"),
               SizedBox(height: size.width*0.15),
               CustomButton(text: 'Save', 
               onTap: () {
@@ -72,6 +72,4 @@ class _CategoryAddScreenState extends State<CategoryAddScreen> {
       return null;
     }
   }
-
 }
-

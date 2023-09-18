@@ -21,23 +21,22 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
- @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-  final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
-  final userData = Provider.of<UserDataProvider>(context, listen: false);
-  bookmarkProvider.loadBookmarks(userData.profileData.uid);
-}
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
+    final userData = Provider.of<UserDataProvider>(context, listen: false);
+    bookmarkProvider.loadBookmarks(userData.profileData.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
     Size size = responseMediaQuery(context);
     final userData = Provider.of<UserDataProvider>(context);
-
     return Scaffold(
-      appBar: CustomAppBar(title: 'Bookmark Items'),
+      appBar: const CustomAppBar(title: 'Bookmark Items'),
       body: Consumer<BookmarkProvider>(
-         builder: (context, bookmarkProvider, child) {
+        builder: (context, bookmarkProvider, child) {
         final bookmarkedItems = bookmarkProvider.bookmarkedItems;
         return ListView.builder(
           itemCount: bookmarkedItems.length,
@@ -56,7 +55,7 @@ void didChangeDependencies() {
                       onConfirm: () {
                         Navigator.of(context).pop();
                         bookmarkProvider.removeItemFromBookMark(context, item, userData.profileData.uid);
-                         setState(() {});
+                        setState(() {});
                       },
                       button1text: StringConstant.button1text,
                       button2text: StringConstant.button2text,
@@ -82,8 +81,7 @@ void didChangeDependencies() {
                       button1text: StringConstant.button1text,
                       button2text: StringConstant.button2text,
                       description: StringConstant.description,
-                      heading: StringConstant.heading,
-                    );
+                      heading: StringConstant.heading);
                   });
               },
               background: Padding(padding: EdgeInsets.fromLTRB(size.width * 0.04,size.width * 0.025,size.width * 0.04,size.width * 0.025),
@@ -110,17 +108,16 @@ void didChangeDependencies() {
                               height: size.width * 0.3,
                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
                               child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(80),
-                                  child: CustomCachedNetworkImage(imageUrl: item.img))))),
+                                borderRadius: BorderRadius.circular(80),
+                                child: CustomCachedNetworkImage(imageUrl: item.img))))),
                         Expanded(flex: 5,
                           child: Padding(padding: EdgeInsets.only(left: size.width * 0.04,top: size.width * 0.025,bottom: size.width * 0.025),
                             child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.start,children: [
-                                  Text(item.name,style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.bold,fontSize: size.width * 0.06)),
-                                  Text(item.price,style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.normal,fontSize: size.width * 0.05)),
-                                  Row(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment:CrossAxisAlignment.center,children: [
-                                        RatingBarWidget(),
-                                        Text("(0 Reviews)",
-                                            style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.normal,fontSize: size.width * 0.03))])]))),
+                              Text(item.name,style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.bold,fontSize: size.width * 0.06)),
+                              Text('\$${item.price}',style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.normal,fontSize: size.width * 0.05)),
+                              Row(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment:CrossAxisAlignment.center,children: [
+                                RatingBarWidget(),
+                                Text("(0 Reviews)",style: TextStyle(fontFamily: StringConstant.font,fontWeight: FontWeight.normal,fontSize: size.width * 0.03))])]))),
                         Expanded(flex: 1,
                             child: InkWell(
                                 onTap: () {

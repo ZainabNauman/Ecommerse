@@ -17,8 +17,6 @@ class StringConstant{
   static const birthday = 'Enter Birthday';
   static const birthdayLabel = 'Birthday';
 
-
-
   static bool isObscure = true;
   static String emailpattern = "^[a-zA-Z0-9+_.-]+@gmail.com";
   static String namepattern = "^[a-zA-Z0-9+_.-]+ +[a-zA-Z0-9+_.-]";
@@ -26,7 +24,6 @@ class StringConstant{
   static String titleSignIn = "Lets Sign you in";
   static String descriptionSignIn = "Welcome back, you have been missed";
   static String buttonSignIn = 'SIGN IN';
-  //static String nopastaccountSignIn = "Don't have an account? Sign Up";
   static String nopastaccountSignIn = 'Don\'t have an account? ';
   static String boldSignUp = 'Sign Up';
 

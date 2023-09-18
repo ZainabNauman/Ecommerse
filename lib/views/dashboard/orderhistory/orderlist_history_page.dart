@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerse/provider/orderlisthistory_provider.dart';
 import 'package:ecommerse/utils/color_constant.dart';
 import 'package:ecommerse/utils/helper_function.dart';
 import 'package:ecommerse/utils/string_constant.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +32,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     Size size = responseMediaQuery(context);
     return Scaffold(
-      appBar: CustomAppBar(title: 'Order Details'),
+      appBar: const CustomAppBar(title: 'Order Details'),
       body: Padding(padding: EdgeInsets.only(top: size.width * 0.03, bottom: size.width * 0.03),
         child: isLoading
             ? const Center(child: CircularProgressIndicator(color: ColorConstant.primaryColor,strokeWidth: 2))
@@ -55,8 +54,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   width: double.infinity,
                   child: Padding(
                     padding: EdgeInsets.all(size.width * 0.04),
-                    child: Row(
-                      children: [
+                    child: Row(children: [
                         Container(
                           decoration: BoxDecoration(color: ColorConstant.primaryColor,borderRadius: BorderRadius.circular(20)),
                            child: Padding(padding: EdgeInsets.all(size.width * 0.02),
@@ -73,7 +71,8 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> displayOrders() async {
     final userDataProvider = Provider.of<UserDataProvider>(context,listen: false);
-    final orders = userDataProvider.profileData.admin.isEmpty? await fetchOrdersForCurrentUser():await fetchOrdersForCustomerUser();
+    final orderListProvider = Provider.of<OrderListHistoryProvider>(context,listen: false);
+    final orders = userDataProvider.profileData.admin.isEmpty? await orderListProvider.fetchOrdersForCurrentUser():await orderListProvider.fetchOrdersForCustomerUser(widget.customeruid);
     for (final order in orders) {
       final orderId = order.id;  
       final orderItems = order['orderItems'];
@@ -81,7 +80,7 @@ class _HistoryPageState extends State<HistoryPage> {
       for (final item in orderItems) {
         final productId = item['productId'];
         final productQuantity = item['productQuantity'];
-        final itemData = await fetchItemData(productId);
+        final itemData = await orderListProvider.fetchItemData(productId);
         if (itemData != null) {
           final itemPrice = itemData['price'];
           totalAmount = totalAmount + double.parse(itemPrice) * productQuantity;
@@ -89,7 +88,6 @@ class _HistoryPageState extends State<HistoryPage> {
           print('Item data not found for Product ID: $productId');
         }
       }
-
       orderDetails.add({
         'orderId': orderId,
         'totalAmount': totalAmount,
@@ -101,46 +99,4 @@ class _HistoryPageState extends State<HistoryPage> {
       setState(() {});
     }
   }
-
-  Future<DocumentSnapshot?> fetchItemData(String productId) async {
-    try {
-      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
-      return itemDoc;
-    } catch (e) {
-      print('Error fetching item data: $e');
-      return null;
-    }
-  }
-
-
-  Future<List<DocumentSnapshot>> fetchOrdersForCurrentUser() async {
-    
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final userId = currentUser?.uid;
-    if (userId == null) {
-      return [];
-    }
-    try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('orders').where('userId', isEqualTo: userId).get();
-      return querySnapshot.docs;
-    } catch (e) {
-      print('Error fetching orders: $e');
-      return [];
-    }
-  }
-  Future<List<DocumentSnapshot>> fetchOrdersForCustomerUser() async {
-    
-    final userId = widget.customeruid;
-    if (userId == null) {
-      return [];
-    }
-    try {
-      final querySnapshot = await FirebaseFirestore.instance.collection('orders').where('userId', isEqualTo: userId).get();
-      return querySnapshot.docs;
-    } catch (e) {
-      print('Error fetching orders: $e');
-      return [];
-    }
-  }
-  
 }

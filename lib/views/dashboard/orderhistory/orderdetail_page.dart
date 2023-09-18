@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerse/provider/orderdetail_page.dart';
 import 'package:ecommerse/utils/color_constant.dart';
 import 'package:ecommerse/utils/helper_function.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../utils/string_constant.dart';
 import '../../../widgets/custom_appbar.dart';
@@ -23,11 +24,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     super.initState();
     displayOrders();
   }
+  
   @override
   Widget build(BuildContext context) {
     Size size = responseMediaQuery(context);
     return Scaffold(
-      appBar: CustomAppBar(title: 'Order Details'),
+      appBar: const CustomAppBar(title: 'Order Details'),
       body: Padding(padding: EdgeInsets.all(size.width * 0.03),
         child: isLoading
             ? const Center(child: CircularProgressIndicator(color: ColorConstant.primaryColor, strokeWidth: 2))
@@ -43,10 +45,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           OrderStatus(
                             orderId: orderDetail['orderId'],
                             orderStatus: orderDetail['status'],
+                            orderUserId:orderDetail['userId'],
                             onStatusChanged: (newStatus) {
                               print('Order status changed to $newStatus');
                             }),
-                          const SizedBox(height: 16.0),
+                           SizedBox(height: size.width*0.06),
                           Card(
                             elevation: 10,
                             child: Padding(padding: EdgeInsets.all(size.width * 0.01),
@@ -91,10 +94,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         DataCell(Text('\$${totalAmount.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold,fontFamily: StringConstant.font)))]));
     return rows;
   }
- 
 
   Future<void> displayOrders() async {
-    final orders = await fetchItemData(widget.orderId);
+    final orderDetailProvider = Provider.of<OrderDetailProvider>(context,listen: false);
+    final orders = await orderDetailProvider.fetchItemData(widget.orderId);
     final orderId = orders!.id;
     final status = orders['status'];
     final userId = orders['userId'];
@@ -103,8 +106,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     for (final item in orderItems) {
       final productId = item['productId'];
       final productQuantity = item['productQuantity'];
-      final productName = await fetchProductName(productId);
-      final productPrice = await fetchProductPrice(productId);
+      final productName = await orderDetailProvider.fetchProductName(productId);
+      final productPrice = await orderDetailProvider.fetchProductPrice(productId);
       productDetails.add({
         'productName': productName,
         'productPrice': productPrice,
@@ -120,37 +123,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     isLoading = false;
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  Future<DocumentSnapshot?> fetchItemData(String orderId) async {
-    try {
-      final itemDoc =
-          await FirebaseFirestore.instance.collection('orders').doc(orderId).get();
-      return itemDoc;
-    } catch (e) {
-      print('Error fetching item data: $e');
-      return null;
-    }
-  }
-
-  Future<String?> fetchProductName(String productId) async {
-    try {
-      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
-      return itemDoc['name'];
-    } catch (e) {
-      print('Error fetching product name: $e');
-      return null;
-    }
-  }
-
-  Future<double> fetchProductPrice(String productId) async {
-    try {
-      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
-      return double.parse(itemDoc['price']) ;
-    } catch (e) {
-      print('Error fetching product price: $e');
-      return 0.0;
     }
   }
 }

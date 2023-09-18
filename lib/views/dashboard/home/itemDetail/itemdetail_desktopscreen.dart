@@ -16,7 +16,6 @@ import '../../../../widgets/ratingbar.dart';
 // ignore: must_be_immutable
 class IndividualItemDesktop extends StatefulWidget{ 
   ItemModel item;
-
   IndividualItemDesktop({super.key,required this.item});
 
   @override
@@ -30,7 +29,7 @@ class _IndividualItemDesktopState extends State<IndividualItemDesktop> {
   @override
   Widget build(BuildContext context) {
     Size size = responseMediaQuery(context);
-    return Scaffold(appBar:  CustomAppBar(title: 'Order Details'),
+    return Scaffold(appBar: const CustomAppBar(title: 'Order Details'),
       body: Row(
         children: [
           Expanded(
@@ -49,8 +48,7 @@ class _IndividualItemDesktopState extends State<IndividualItemDesktop> {
                       padding: EdgeInsets.only(top: size.width*0.08,left:size.width*0.04,bottom: size.width*0.01),
                       child: Text(widget.item.name,style: TextStyle(fontSize:size.width*0.05 ,fontFamily:StringConstant.font,fontWeight: FontWeight.bold)),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left:size.width*0.04,bottom: size.width*0.01,right: size.width*0.02),
+                    Padding(padding: EdgeInsets.only(left:size.width*0.04,bottom: size.width*0.01,right: size.width*0.02),
                       child: Row(children: [
                         Text(widget.item.price,style: TextStyle(fontSize: size.width*0.055 ,fontFamily:StringConstant.font,fontWeight: FontWeight.bold)),
                         Expanded(child: SizedBox(width: size.width*0.4)),
@@ -59,8 +57,7 @@ class _IndividualItemDesktopState extends State<IndividualItemDesktop> {
                 setState(() {
                   numberOfItems = items;
                 });
-              },
-            ),])),
+              })])),
                     Padding(padding:  EdgeInsets.only(left:size.width*0.04,bottom: size.width*0.02),
                       child: Row(crossAxisAlignment: CrossAxisAlignment.center,
                         children: [

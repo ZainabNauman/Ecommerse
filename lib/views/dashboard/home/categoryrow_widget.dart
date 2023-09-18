@@ -8,7 +8,7 @@ import 'category_add.dart';
 
 class CategoryRow extends StatefulWidget {
   final void Function(int) onCategoryTapped;
-  String personBrand;
+  final String personBrand;
 
   CategoryRow({super.key, required this.onCategoryTapped, required this.personBrand});
 

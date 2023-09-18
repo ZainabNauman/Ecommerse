@@ -9,7 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData? leadingIcon;
   final VoidCallback? onLeadingIconPressed;
 
-  CustomAppBar({
+  const CustomAppBar({
     required this.title,
     this.actions,
     this.titleColor = Colors.black,
@@ -18,30 +18,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: ColorConstant.primaryColor,
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.white),
       title: Text(
         title,
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontSize: 20.0, // You can adjust the font size here
-          fontFamily: StringConstant.font, // Replace with your desired font family
-        ),
-      ),
+          fontSize: 20.0,  
+          fontFamily: StringConstant.font)),
       leading: leadingIcon != null
           ? IconButton(
               icon: Icon(leadingIcon),
-              onPressed: onLeadingIconPressed,
-            )
+              onPressed: onLeadingIconPressed)
           : null,
-      actions: actions,
-    );
+      actions: actions);
   }
 }

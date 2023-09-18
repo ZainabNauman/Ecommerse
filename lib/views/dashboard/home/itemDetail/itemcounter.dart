@@ -1,4 +1,5 @@
 import 'package:ecommerse/utils/color_constant.dart';
+import 'package:ecommerse/utils/string_constant.dart';
 import 'package:flutter/material.dart';
 
 class ShoppingCounter extends StatefulWidget {
@@ -6,7 +7,7 @@ class ShoppingCounter extends StatefulWidget {
   final int quantity;
   final int presentCartCount;
 
-  ShoppingCounter({
+  const ShoppingCounter({
     Key? key,
     required this.quantity,
     required this.onItemsChanged,
@@ -18,17 +19,16 @@ class ShoppingCounter extends StatefulWidget {
 }
 
 class _ShoppingCounterState extends State<ShoppingCounter> {
-  int numberOfItems = 1;
+  int numberOfItems = 0;
 
   @override
   void initState() {
     super.initState();
-    numberOfItems = widget.presentCartCount != 0 ? widget.presentCartCount : 1;
+    numberOfItems = widget.presentCartCount != 0 ? widget.presentCartCount : 0;
   }
   
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       children: [
         _shoppingItem()]);
@@ -36,16 +36,14 @@ class _ShoppingCounterState extends State<ShoppingCounter> {
 
   Widget _shoppingItem() {
     Size size = MediaQuery.of(context).size;
-    
     return Container(
       color: Colors.transparent,
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,children: <Widget>[
           _decrementButton(),
           SizedBox(width: size.width * 0.03),
-          Text('$numberOfItems',style: TextStyle(fontSize: size.width * 0.04, color: Colors.black)),
+          Text('$numberOfItems',style: TextStyle(fontFamily: StringConstant.font,fontSize: size.width * 0.04, color: Colors.black)),
           SizedBox(width: size.width * 0.03),
-          _incrementButton()
-      ]));
+          _incrementButton()]));
   }
 
   Widget _incrementButton() {
@@ -60,7 +58,7 @@ class _ShoppingCounterState extends State<ShoppingCounter> {
           widget.onItemsChanged(numberOfItems);
         }},
       child: Container(
-        decoration: BoxDecoration(color: isIncrementDisabled ? Colors.red : ColorConstant.secondaryLightColor,borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: isIncrementDisabled ? Colors.red : ColorConstant.secondaryLightColor,borderRadius: BorderRadius.circular(5)),
         child: Padding(padding: EdgeInsets.all(size.width * 0.01),
           child: Icon(Icons.add,color: isIncrementDisabled ? ColorConstant.primaryColor : Colors.black))));
   }
@@ -76,7 +74,7 @@ class _ShoppingCounterState extends State<ShoppingCounter> {
         widget.onItemsChanged(numberOfItems);
       },
       child: Container(
-        decoration: BoxDecoration(color: ColorConstant.secondaryLightColor,borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(color: ColorConstant.secondaryLightColor,borderRadius: BorderRadius.circular(5)),
         child: Padding(padding: EdgeInsets.all(size.width * 0.01),
           child: const Icon(Icons.remove, color: Colors.black))));
   }

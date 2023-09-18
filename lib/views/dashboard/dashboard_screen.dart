@@ -21,9 +21,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final dashboardProvider = Provider.of<DashboardProvider>(context);
-    
     dashboardProvider.role(context);
-    
     double width = displayWidth(context);
 
     return Scaffold(
@@ -31,44 +29,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: Responsive.isMobile(context)
           ? dashboardProvider.usertype[dashboardProvider.currentIndex]
           : Responsive.isTablet(context)
-              ? Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: VerticalNavigationBar(
-                        currentIndex: dashboardProvider.currentIndex,
-                        changeIndex: dashboardProvider.changeIndex,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: dashboardProvider.usertype[dashboardProvider.currentIndex],
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: VerticalNavigationBar(
-                        currentIndex: dashboardProvider.currentIndex,
-                        changeIndex: dashboardProvider.changeIndex,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 6,
-                      child: dashboardProvider.usertype[dashboardProvider.currentIndex],
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(),
-                    ),
-                  ],
-                ),
+            ? Row(children: [
+              Expanded(flex: 2,
+                child: VerticalNavigationBar(
+                  currentIndex: dashboardProvider.currentIndex,
+                  changeIndex: dashboardProvider.changeIndex)),
+              Expanded(flex: 8,
+                child: dashboardProvider.usertype[dashboardProvider.currentIndex],
+              )])
+            : Row(children: [
+                  Expanded(flex: 1,child: Container()),
+                  Expanded(flex: 1,
+                    child: VerticalNavigationBar(
+                      currentIndex: dashboardProvider.currentIndex,
+                      changeIndex: dashboardProvider.changeIndex)),
+                  Expanded(flex: 6,
+                    child: dashboardProvider.usertype[dashboardProvider.currentIndex]),
+                  Expanded(flex: 1,child: Container())]),
       bottomNavigationBar: Responsive.isMobile(context)
           ? Padding(
               padding: EdgeInsets.only(left: width * 0.01, right: width * 0.01, bottom: width * 0.01),
@@ -81,19 +58,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   selectedItemColor: Colors.white,
                   unselectedItemColor: const Color.fromARGB(255, 214, 213, 213),
                   showUnselectedLabels: true,
-                  selectedIconTheme: IconThemeData(
-                    size: responseSize(width * 0.06, context),
-                  ),
+                  selectedIconTheme: IconThemeData(size: responseSize(width * 0.06, context)),
                   onTap: (index) {
                     print("Tapped index: $index");
                     if (index >= 0 && index < dashboardProvider.bottomNavigationBarItems.length) {
                       dashboardProvider.changeIndex(index);
-                    }
-                  },
-                ),
-              ),
-            )
-          : null,
-    );
+                    }})))
+          : null);
   }
 }

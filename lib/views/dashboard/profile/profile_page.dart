@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerse/utils/color_constant.dart';
 import 'package:ecommerse/utils/helper_function.dart';
 import 'package:ecommerse/utils/string_constant.dart';
 import 'package:ecommerse/views/dashboard/profile/edit_profile.dart';
+import 'package:ecommerse/widgets/custom_chachenetwork_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,7 +61,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           offset: const Offset(0, 3))]),
                     child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                       Container(decoration:const BoxDecoration(color: ColorConstant.primaryColor,shape: BoxShape.circle), height: size.width*0.5,width: size.width*0.5,child: ClipRRect(borderRadius: BorderRadius.circular(100),child: CachedNetworkImage(width: double.infinity,imageUrl: userDataProvider.profileData.img,fit: BoxFit.fill,))),
+                       Container(height: size.width*0.5,width: size.width*0.5,
+                        decoration:const BoxDecoration(color: ColorConstant.primaryColor,shape: BoxShape.circle), 
+                        child: ClipRRect(borderRadius: BorderRadius.circular(100),
+                        child: CustomCachedNetworkImage(errorWidth: double.infinity,imageUrl: userDataProvider.profileData.img))),
                         SizedBox(height: size.width*0.01),
                         Text(userDataProvider.profileData.name,
                           style: TextStyle(

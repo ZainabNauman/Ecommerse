@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerse/utils/color_constant.dart';
 import 'package:ecommerse/utils/helper_function.dart';
 import 'package:ecommerse/views/dashboard/orderhistory/ordervendor_status.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../provider/person_provider.dart';
+import '../../../provider/orderdetail_page.dart';
 import '../../../utils/string_constant.dart';
 import '../../../widgets/custom_appbar.dart';
 
@@ -31,7 +30,7 @@ class _OrderDetailPageState extends State<OrderDetailVendorPage> {
   Widget build(BuildContext context) {
     Size size = responseMediaQuery(context);
     return Scaffold(
-      appBar: CustomAppBar(title: 'Order Details'),
+      appBar: const CustomAppBar(title: 'Order Details'),
       body: Padding(padding: EdgeInsets.all(size.width * 0.03),
         child: isLoading
           ? const Center(child: CircularProgressIndicator(color: ColorConstant.primaryColor, strokeWidth: 2))
@@ -97,7 +96,8 @@ class _OrderDetailPageState extends State<OrderDetailVendorPage> {
   }
 
   Future<void> displayOrders() async {
-    final orders = await fetchItemData(widget.orderId);
+    final orderDetailProvider = Provider.of<OrderDetailProvider>(context,listen: false);
+    final orders = await orderDetailProvider.fetchItemDataV(context,widget.orderId,widget.customerband);
     final orderId = orders!.id;
     final status = orders['status'];
     final userId = orders['userId'];
@@ -107,8 +107,8 @@ class _OrderDetailPageState extends State<OrderDetailVendorPage> {
     for (final item in orderItems) {
       final productId = item['productId'];
       final productQuantity = item['productQuantity'];
-      final productName = await fetchProductName(productId);
-      final productPrice = await fetchProductPrice(productId);
+      final productName = await orderDetailProvider.fetchProductNameV(productId);
+      final productPrice = await orderDetailProvider.fetchProductPriceV(productId);
       productDetails.add({
         'productName': productName,
         'productPrice': productPrice,
@@ -125,46 +125,6 @@ class _OrderDetailPageState extends State<OrderDetailVendorPage> {
     isLoading = false;
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  Future<DocumentSnapshot?> fetchItemData(String orderId) async {
-    final userDataProvider = Provider.of<UserDataProvider>(context,listen: false);
-    final brand = userDataProvider.profileData.admin.isNotEmpty
-        ? widget.customerband
-        : userDataProvider.profileData.brand;
-    try {
-      final itemDoc = await FirebaseFirestore.instance.collection('ordersforvendors').doc(brand).collection('vendororders').doc(orderId).get();
-      if (itemDoc.exists) {
-        print('Item document exists for orderId: $orderId');
-        return itemDoc;
-      } else {
-        print('Item document does not exist for orderId: $orderId');
-        return null;
-      }
-    } catch (e) {
-      print('Error fetching item data: $e');
-      return null;
-    }
-  }
-
-  Future<String?> fetchProductName(String productId) async {
-    try {
-      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
-      return itemDoc['name'];
-    } catch (e) {
-      print('Error fetching product name: $e');
-      return null;
-    }
-  }
-
-  Future<double> fetchProductPrice(String productId) async {
-    try {
-      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
-      return double.parse(itemDoc['price']) ;
-    } catch (e) {
-      print('Error fetching product price: $e');
-      return 0.0;
     }
   }
 }

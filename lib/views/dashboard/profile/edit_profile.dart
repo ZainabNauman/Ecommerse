@@ -92,7 +92,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       Navigator.of(context).pop();
                     },
                     onConfirm:  () {
-                      if(emailController.text.trim().isNotEmpty && nameController.text.trim().isNotEmpty &&phoneController.text.trim().isNotEmpty &&addressController.text.trim().isNotEmpty &&birthdayController.text.trim().isNotEmpty && imgController.text.trim().isNotEmpty) {
+                      if(emailController.text.trim().isNotEmpty && nameController.text.trim().isNotEmpty &&phoneController.text.trim().isNotEmpty &&addressController.text.trim().isNotEmpty &&birthdayController.text.trim().isNotEmpty ) {
                       editProfileProvider.updateProfileData(context,nameController.text.trim(),birthdayController.text.trim(),addressController.text.trim(),phoneController.text.trim(),emailController.text.trim(),imgController.text.trim());
                       Navigator.pop(context);
                       Navigator.pop(context);

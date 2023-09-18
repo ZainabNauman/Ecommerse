@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerse/provider/orderlisthistory_provider.dart';
 import 'package:ecommerse/utils/color_constant.dart';
 import 'package:ecommerse/utils/helper_function.dart';
 import 'package:ecommerse/utils/string_constant.dart';
@@ -23,14 +24,14 @@ class _HistoryPageVendorState extends State<HistoryPageVendor> {
   @override
   void initState() {
     super.initState();
-    displayOrders();
+    displayOrdersV();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = responseMediaQuery(context);
     return Scaffold(
-      appBar: CustomAppBar(title: 'Order Details'),
+      appBar: const CustomAppBar(title: 'Order Details'),
       body: Padding(padding: EdgeInsets.only(top: size.width * 0.03, bottom: size.width * 0.03),
         child: isLoading
             ? const Center(child: CircularProgressIndicator(color: ColorConstant.primaryColor, strokeWidth: 2))
@@ -62,53 +63,44 @@ class _HistoryPageVendorState extends State<HistoryPageVendor> {
                 })));
   }
 
-  Future<void> displayOrders() async {
-  final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
-  final brand = userDataProvider.profileData.brand.isNotEmpty
+  Future<void> displayOrdersV() async {
+    final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+    final orderListProvider = Provider.of<OrderListHistoryProvider>(context, listen: false);
+    final brand = userDataProvider.profileData.brand.isNotEmpty
       ? userDataProvider.profileData.brand
       : widget.customerbrand;
-  try {
-    final querySnapshot = await FirebaseFirestore.instance.collection('ordersforvendors').doc(brand).collection('vendororders').get();
-    for (final orderDoc in querySnapshot.docs) {
-      final orderId = orderDoc.id;
-      final orderItems = orderDoc['orderItems'];
-      double totalAmount = 0;
-      for (final item in orderItems) {
-        final productId = item['productId'];
-        final productQuantity = item['productQuantity'];
-        final itemData = await fetchItemData(productId);
-        if (itemData != null) {
-          final itemPrice = itemData['price'];
-          if (itemPrice != null) {
-            totalAmount = totalAmount + double.parse(itemPrice) * productQuantity;
-          } else {
-            print('Price not found for Product ID: $productId');
-          }
-        } else {
-          print('Item data not found for Product ID: $productId');
-        }
-      }
-      orderDetails.add({
-        'orderId': orderId,
-        'totalAmount': totalAmount,
-      });
-    }
-    isLoading = false;
-    if (mounted) {
-      setState(() {});
-    }
-  } catch (e) {
-    print('Error fetching orders: $e');
-  }
-}
-
-  Future<DocumentSnapshot?> fetchItemData(String productId) async {
     try {
-      final itemDoc = await FirebaseFirestore.instance.collection('items').doc(productId).get();
-      return itemDoc;
+      final querySnapshot = await FirebaseFirestore.instance.collection('ordersforvendors').doc(brand).collection('vendororders').get();
+      for (final orderDoc in querySnapshot.docs) {
+        final orderId = orderDoc.id;
+        final orderItems = orderDoc['orderItems'];
+        double totalAmount = 0;
+        for (final item in orderItems) {
+          final productId = item['productId'];
+          final productQuantity = item['productQuantity'];
+          final itemData = await orderListProvider.fetchItemDataV(productId);
+          if (itemData != null) {
+            final itemPrice = itemData['price'];
+            if (itemPrice != null) {
+              totalAmount = totalAmount + double.parse(itemPrice) * productQuantity;
+            } else {
+              print('Price not found for Product ID: $productId');
+            }
+          } else {
+            print('Item data not found for Product ID: $productId');
+          }
+        }
+        orderDetails.add({
+          'orderId': orderId,
+          'totalAmount': totalAmount,
+        });
+      }
+      isLoading = false;
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
-      print('Error fetching item data: $e');
-      return null;
+      print('Error fetching orders: $e');
     }
   }
 }

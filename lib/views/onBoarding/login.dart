@@ -35,12 +35,10 @@ class _LoginInScreenState extends State<LoginInScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                   "Login In",
+                  Text("Login In",
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold,fontFamily: StringConstant.font)),
                   SizedBox(height: size.width*0.1,),
-                  Text(
-                    StringConstant.descriptionSignIn,
+                  Text(StringConstant.descriptionSignIn,
                     style: TextStyle(
                         color: Colors.grey.shade600,
                         fontSize: 15,

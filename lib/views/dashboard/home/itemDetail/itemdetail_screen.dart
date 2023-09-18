@@ -28,18 +28,24 @@ class _IndividualItemState extends State<IndividualItem> {
   int numberOfItems =1;
 
   @override
+  void initState() {
+    super.initState();
+    final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
+    isBookmarked = bookmarkProvider.isBookmarked(widget.item.id);
+  }
+
+  @override
   Widget build(BuildContext context) {   
     Size size = responseMediaQuery(context);
     return Scaffold(
-      appBar: 
-      CustomAppBar(title: 'Order Details'),
-      body:  Column(children: [
+      appBar: const CustomAppBar(title: 'Order Details'),
+      body: Column(children: [
           Expanded(flex: 5,child: CustomCachedNetworkImage(imageUrl: widget.item.img)),
           Expanded(flex: 5,
             child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,children: [
-                  Padding(padding: EdgeInsets.only(top: size.width*0.02,left:size.width*0.04,bottom: size.width*0.01),
-                    child: Text(widget.item.name,style: TextStyle(fontSize:size.width*0.03,fontFamily:StringConstant.font,fontWeight: FontWeight.bold))),
+                  Padding(padding: EdgeInsets.only(top: size.width*0.04,left:size.width*0.04,bottom: size.width*0.01),
+                    child: Text(widget.item.name,style: TextStyle(fontSize:size.width*0.045,fontFamily:StringConstant.font,fontWeight: FontWeight.bold))),
                   Padding(padding: EdgeInsets.only(left:size.width*0.04,bottom: size.width*0.01,right: size.width*0.04),
                     child: Row(children: [ 
                       Text('\$ ',style: TextStyle(fontSize: size.width*0.04 ,fontFamily:StringConstant.font,fontWeight: FontWeight.bold)),
@@ -53,9 +59,9 @@ class _IndividualItemState extends State<IndividualItem> {
                         })])),
                   Padding(padding:  EdgeInsets.only(left:size.width*0.04,bottom: size.width*0.02),
                     child: Row(crossAxisAlignment: CrossAxisAlignment.center,children: [
-                        RatingBarWidget(rating: 2.5,),
-                        SizedBox(width: size.width*0.005,),
-                        Text("(0 Reviews)",style: TextStyle(fontFamily: StringConstant.font,fontSize: size.width*0.03))])),
+                      RatingBarWidget(rating: 2.5,),
+                      SizedBox(width: size.width*0.005,),
+                      Text("(0 Reviews)",style: TextStyle(fontFamily: StringConstant.font,fontSize: size.width*0.03))])),
                   Padding(padding: EdgeInsets.only(left: size.width*0.04,bottom: size.width*0.02),
                     child: Text("Description:",textAlign: TextAlign.center,style: TextStyle(fontSize: size.width*0.03 ,fontFamily:StringConstant.font,fontWeight: FontWeight.bold))),
                   Padding(padding: EdgeInsets.only(left: size.width*0.04,bottom: size.width*0.02,right: size.width*0.04),
@@ -63,7 +69,7 @@ class _IndividualItemState extends State<IndividualItem> {
                   SizedBox(width: size.width*0.04),
                   Padding(padding: EdgeInsets.only(left:size.width*0.04,bottom: size.width*0.04,right: size.width*0.04,top: size.width*0.02),
                     child: Row(crossAxisAlignment: CrossAxisAlignment.center,children: [
-                        Container(decoration: BoxDecoration(color: ColorConstant.secondaryColor,borderRadius: BorderRadius.circular(8)),
+                      Container(decoration: BoxDecoration(color: ColorConstant.secondaryLightColor,borderRadius: BorderRadius.circular(5)),
                         child: Padding(padding:  const EdgeInsets.all(10),
                           child: GestureDetector(
                             child: Icon(isBookmarked
@@ -71,25 +77,23 @@ class _IndividualItemState extends State<IndividualItem> {
                                   : Icons.bookmark_border,
                               size: 25),
                             onTap: () {
-                            setState(() {
-                              isBookmarked = !isBookmarked;
-                            });
-                            final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
-                            final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
-                            final userId = userDataProvider.profileData.uid;
-                            if (isBookmarked) {
-                              bookmarkProvider.toggleBookmark(context, widget.item,userId);
-                            } else {
-                             //bookmarkProvider.removeItemFromBookMark(context, widget.item,userId);
-                            }
-                            }
-                          ),
-                        )),
-                        SizedBox(width: size.width*0.02),
-                        Expanded(child: CustomButton(color: Colors.white,text: 'ADD TO CART',
-                        onTap: () async {
-                          final cartProvider = Provider.of<AddtoCartProvider>(context,listen: false);                     
-                          cartProvider.toggleAddtoCart(context, widget.item,numberOfItems);
-                        }))]))])))]));  
+                              setState(() {
+                                isBookmarked = !isBookmarked;
+                              });
+                              final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
+                              final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+                              final userId = userDataProvider.profileData.uid;
+                              if (isBookmarked) {
+                                bookmarkProvider.toggleBookmark(context, widget.item,userId);
+                              } else {
+                              bookmarkProvider.removeItemFromBookMark(context, widget.item,userId);
+                              }
+                            }))),
+                      SizedBox(width: size.width*0.02),
+                      Expanded(child: CustomButton(color: Colors.white,text: 'ADD TO CART',
+                      onTap: () async {
+                        final cartProvider = Provider.of<AddtoCartProvider>(context,listen: false);                     
+                        cartProvider.toggleAddtoCart(context, widget.item,numberOfItems);
+                      }))]))])))]));  
   }  
 }
