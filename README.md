@@ -1,6 +1,6 @@
 # ecommerse
 
-A new Flutter project.
+An Ecommerse Project using firebase.
 
 ## Getting Started
 
